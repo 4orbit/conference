@@ -26,6 +26,16 @@
 
 \section{Why and How to Backup}
 
+??? How easy is it to use pgBackRest
+??? Write recovery.conf file
+??? Use backrest as examples of BP.
+??? Configurations
+??? Consistent setups
+??? Don't backup to standby
+??? Versions must match
+
+??? Best practices for Crunchy
+
 \begin{frame}
     \frametitle{Why Backup?}
 
@@ -40,6 +50,7 @@
 
         \begin{itemize}
             \item WAL archive for when async streaming gets behind.\pause
+            \item
             \item Sync replica from backup instead of master.\pause
         \end{itemize}
 
@@ -184,6 +195,9 @@ retention-diff=1
 
     Multi-processing can lead to dramatic reductions in restore time and network utilization.  Use the \texttt{--delta} option with the \texttt{restore} command when time is of the essence.
 
+    Another system if possible (try to make a copy - at least pg_xlog).
+    Config files may be part of the backup.
+
     Double-check where you are restoring.  pgBackRest will refuse to overwrite a \textit{running} cluster but it will happily overwrite a shutdown down cluster when \texttt{--delta} is used.
 \end{frame}
 
@@ -192,6 +206,13 @@ retention-diff=1
 
     Asynchronous parallel archiving allows compression and transfer to be offloaded to another process which maintains continuous connections to the remote server, improving throughput significantly.\\\pause
     \vspace{1em}
+
+    Archive timeout
+
+    Create file to reserve space.
+
+    Space!
+
     A critical feature for databases with extremely high write volume.
 \end{frame}
 
