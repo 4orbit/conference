@@ -82,7 +82,7 @@
 \begin{frame}
     \frametitle{Schr\"{o}dinger’s Backup}
 
-    The state of any backup is unknown until a restore is attempted.
+    \Large The state of any backup is unknown until a restore is attempted.
 \end{frame}
 
 \begin{frame}
@@ -139,39 +139,60 @@
     \end{itemize}
 \end{frame}
 
+\begin{frame}[fragile]
+    \frametitle{Backup Retention}
+
+    A good default retention is:
+
+    \begin{quote}\begin{verbatim}
+retention-full=5
+retention-diff=3
+    \end{verbatim}\end{quote}\vspace{-1em}
+
+    Run the full backup once a week and differential backups the other six days.
+    \vspace{1em}
+    With this schedule there will always be at least four weeks of backups to work with.
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Backup Retention}
+
+    A minimal retention is:
+
+    \begin{quote}\begin{verbatim}
+retention-full=2
+retention-diff=1
+    \end{verbatim}\end{quote}\vspace{-1em}
+
+    Run the full backup once a week and differentials the other six days.
+    \vspace{1em}
+    With this schedule there will always be at least a week of backups to work with.  This not enough for many use cases and this retention should be considered "degraded" and only used temporarily until more space is allocated.
+\end{frame}
+
 \begin{frame}
     \frametitle{Checksums}
 
     When initializing a new cluster always specify the \texttt{-k} option.
 
-    This will enable page checksums which pgBackRest will verify on every backup.
+    This will enable page checksums which pgBackRest will verify on every backup.  If corruption is detected early it can often be corrected.
+
+    If corruption is detected, don't panic!  As long as older non-corrupted backups exist there are options.
 \end{frame}
 
 \begin{frame}
-    \frametitle{Delta Restore}
+    \frametitle{Restore}
 
-    \begin{itemize}
-        \item Backup manifest contains checksum and size for every file.\pause
-        \item On delta restore all files not present in the backup or with a different size are removed from PGDATA.\pause
-        \item The remaining files are checksummed and only files with a checksum mismatch are restored.\pause
-        \item Multi-processing can lead to dramatic reductions in restore time and network utilization.
-    \end{itemize}
+    Multi-processing can lead to dramatic reductions in restore time and network utilization.  Use the \texttt{--delta} option with the \texttt{restore} command when time is of the essence.
+
+    Double-check where you are restoring.  pgBackRest will refuse to overwrite a \textit{running} cluster but it will happily overwrite a shutdown down cluster when \texttt{--delta} is used.
 \end{frame}
 
 \begin{frame}
-    \frametitle{Parallel Archiving}
+    \frametitle{Archiving}
 
-    \begin{itemize}
-        \item Dedicated commands are included for both pushing WAL to the archive and retrieving WAL from the archive.\pause
-        \item Push command automatically detects WAL segments that are pushed multiple times and de-duplicates when the segment is identical, otherwise an error is raised.\pause
-        \item Push and get commands both ensure that the database and repository match by comparing PostgreSQL versions and system identifiers to prevent misconfiguration.\pause
-
-        \item Asynchronous parallel archiving allows compression and transfer to be offloaded to another process which maintains continuous connections to the remote server, improving throughput significantly.\pause
-
-            \begin{itemize}
-                \item Critical feature for databases with extremely high write volume.
-            \end{itemize}
-    \end{itemize}
+    Asynchronous parallel archiving allows compression and transfer to be offloaded to another process which maintains continuous connections to the remote server, improving throughput significantly.\\\pause
+    \vspace{1em}
+    A critical feature for databases with extremely high write volume.
 \end{frame}
 
 \begin{frame}
@@ -182,6 +203,27 @@
         \item Backup starts when replay location on standby reaches start backup location.\pause
         \item Reduces load on master because replicated files are copied from the standby.
     \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Don't Panic!}
+
+    A failed backup should not be cause for panic.  Ideally, there are a number of backups that can be used for a restore.\\
+    \vspace{1em}
+    Remember:\\
+    \vspace{1em}
+    Backup + WAL = Recoverable Database\\
+    \textbf{OLDER} Backup + WAL = Recoverable Database
+\end{frame}
+
+\begin{frame}
+    \frametitle{Now Panic!}
+
+    If Backup + WAL = Recoverable Database, then then a failing archive command means you won't be able to do a complete restore even if the backups have been successful.\\
+    \vspace{1em}
+    Worse, the disk could fill up and cause PostgreSQL to panic and stop.\\
+    \vspace{1em}
+    Even if the replica is up to date it is not a backup!
 \end{frame}
 
 \section{Questions?}
