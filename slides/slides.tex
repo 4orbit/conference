@@ -4,7 +4,7 @@
 % Build from the Vagrant VM:
 % cd /talk/slides && make -f /template/Makefile
 % ----------------------------------------------------------------------------------------------------------------------------------
-\def\mytitle{pgBackRest Overview}
+\def\mytitle{pgAudit Overview}
 \def\mysubject{}
 \def\myevent{Crunchy Storm}
 \def\myauthor{David Steele}
@@ -18,14 +18,6 @@
 \def\mytemplatepath{/template/}
 \input{\mytemplatepath crunchy-template.tex}
 
-% Agenda
-\begin{frame}
-    \frametitle{Agenda}
-    \tableofcontents
-\end{frame}
-
-\section{Introduction}
-
 \begin{frame}
     \frametitle{About David}
 
@@ -38,44 +30,93 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{What is pgBackRest?}
-
-    pgBackRest aims to be a simple, reliable backup and restore system that can seamlessly scale up to the largest databases and workloads.\pause\vspace{1em}
-
-    pgBackRest has a strong emphasis on performance, including:
+    \frametitle{Why pgAudit?}
 
     \begin{itemize}
-        \item Parallel/asynchronous operation for all core commands\pause
-        \item Backup from Standby\pause
-        \item Advanced and flexible configuration for tuning specific commands
+        \item The goal of the PostgreSQL Audit extension (pgAudit) is to provide PostgreSQL users with capability to produce audit logs often required to comply with government, financial, or ISO certifications.
+        \item Organizations may also have internal requirements that can be satisfied with pgAudit.
+        \item Can also be used for detailed debugging, metrics, and monitoring.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Example (log\_statement = all)}
+
+    \begin{itemize}
+        \item User statement:
+
+    \vspace{.75em}\begin{lstlisting}
+DO $$
+BEGIN
+    EXECUTE 'CREATE TABLE import' || 'ant_table (id INT)';
+END $$;
+    \end{lstlisting}\pause\vspace{1em}
+
+        \item What gets logged:
+
+    \vspace{.75em}\begin{lstlisting}
+LOG:  statement: DO $$
+BEGIN
+    EXECUTE 'CREATE TABLE import' || 'ant_table (id INT)';
+END $$; 
+    \end{lstlisting}\pause\vspace{1em}
+
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Example (pgAudit)}
+
+    \begin{itemize}
+        \item User statement:
+
+    \vspace{.75em}\begin{lstlisting}
+DO $$
+BEGIN
+    EXECUTE 'CREATE TABLE import' || 'ant_table (id INT)';
+END $$;
+    \end{lstlisting}\pause\vspace{1em}
+
+        \item What gets logged:
+
+    \vspace{.75em}\begin{lstlisting}
+AUDIT: SESSION,33,1,FUNCTION,DO,,,"DO $$
+BEGIN
+    EXECUTE 'CREATE TABLE import' || 'ant_table (id INT)';
+END $$;"
+AUDIT: SESSION,33,2,DDL,CREATE TABLE,TABLE,public.important_table,CREATE TABLE important_table (id INT)
+    \end{lstlisting}\pause\vspace{1em}
+
     \end{itemize}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Coming Up}
-
-    pgBackRest is currently being rewritten in pure C.\pause\vspace{1em}
-
-    pgBackRest has a strong emphasis on performance, including:
+    \frametitle{Stability}
 
     \begin{itemize}
-        \item Parallel/asynchronous operation for all core commands\pause
-        \item Backup from Standby\pause
-        \item Advanced and flexible configuration for tuning specific commands
+        \item Stability is one of the primary goals of pgAudit.
+        \item Each release is maintained on a separate branch like PostgreSQL (e.g. REL\_11\_STABLE).
+        \item Only bug fixes are back-patched.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{The Future}
+
+    \begin{itemize}
+        \item Add new logging class MISC\_SET.
+        \item Add user settable comment field.
     \end{itemize}
 \end{frame}
 
 \begin{frame}
     \frametitle{Questions?}
 
-    website: \url{http://www.pgbackrest.org}\\
+    website: \url{http://www.pgaudit.org}\\
     \vspace{1em}
-    email: \href{mailto:david@pgbackrest.org}{david@pgbackrest.org} \\
     email: \href{mailto:david@crunchydata.com}{david@crunchydata.com}\\
     \vspace{1em}
-    releases: \url{https://github.com/pgbackrest/pgbackrest/releases}\\
-    \vspace{1em}
-    slides \& demo: \url{https://github.com/dwsteele/conference/releases}\\
+    github: \url{https://github.com/pgaudit/pgaudit}\\
 \end{frame}
 
 % End document
