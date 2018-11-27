@@ -18,14 +18,6 @@
 \def\mytemplatepath{/template/}
 \input{\mytemplatepath crunchy-template.tex}
 
-% Agenda
-\begin{frame}
-    \frametitle{Agenda}
-    \tableofcontents
-\end{frame}
-
-\section{Introduction}
-
 \begin{frame}
     \frametitle{About David}
 
@@ -40,28 +32,59 @@
 \begin{frame}
     \frametitle{What is pgBackRest?}
 
-    pgBackRest aims to be a simple, reliable backup and restore system that can seamlessly scale up to the largest databases and workloads.\pause\vspace{1em}
+    pgBackRest aims to be a simple, reliable backup and restore system that can seamlessly scale up to the largest databases and workloads.\pause
+\end{frame}
 
-    pgBackRest has a strong emphasis on performance, including:
+\begin{frame}
+    \frametitle{Performance}
+
+    pgBackRest has a strong emphasis on performance:
 
     \begin{itemize}
         \item Parallel/asynchronous operation for all core commands\pause
         \item Backup from Standby\pause
         \item Advanced and flexible configuration for tuning specific commands
+        \item Delta restore mode using checksums\pause
     \end{itemize}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Coming Up}
+    \frametitle{Reliability}
 
-    pgBackRest is currently being rewritten in pure C.\pause\vspace{1em}
-
-    pgBackRest has a strong emphasis on performance, including:
+    pgBackRest strives to avoid corruption and misconfiguration:
 
     \begin{itemize}
-        \item Parallel/asynchronous operation for all core commands\pause
-        \item Backup from Standby\pause
-        \item Advanced and flexible configuration for tuning specific commands
+        \item All files/manifests are checksummed
+        \item Checksums are tested on every operation
+        \item Version and system ID are used to avoid crossing repositories
+        \item Archive command that de-dupes and does not overwrite existing WAL
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Code Coverage}
+
+    pgBackRest has unparalleled code coverage:
+
+    \begin{itemize}
+        \item 99.6\% line/branch/condition coverage in the C code (unit tests)
+        \item 93.1\% line/branch/condition coverage in the Perl code (unit/integration tests)
+        \item Each uncovered line/branch/condition is documented with the reason it is not covered
+        \item New C patches must have 100\% coverage (including documented exceptions) to be accepted
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{The Future}
+
+    pgBackRest is currently being migrated to C and code coverage is being increased to 100\% (including documented exceptions).\vspace{1em}
+
+    Some future features under consideration:
+
+    \begin{itemize}
+        \item Protocol layer over SSL (no SSH required)
+        \item Page-level incremental
+        \item Windows support
     \end{itemize}
 \end{frame}
 
@@ -70,12 +93,9 @@
 
     website: \url{http://www.pgbackrest.org}\\
     \vspace{1em}
-    email: \href{mailto:david@pgbackrest.org}{david@pgbackrest.org} \\
     email: \href{mailto:david@crunchydata.com}{david@crunchydata.com}\\
     \vspace{1em}
-    releases: \url{https://github.com/pgbackrest/pgbackrest/releases}\\
-    \vspace{1em}
-    slides \& demo: \url{https://github.com/dwsteele/conference/releases}\\
+    source: \url{https://github.com/pgbackrest/pgbackrest}
 \end{frame}
 
 % End document
